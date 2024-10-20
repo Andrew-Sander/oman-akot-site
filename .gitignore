@@ -1,0 +1,7 @@
+# Node.js
+server/.env
+server/node_modules
+
+# React
+omans-site/node_modules/
+omans-site/build/
