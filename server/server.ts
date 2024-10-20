@@ -17,7 +17,7 @@ const cors = require("cors");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Allow only the frontend URL to access
+  origin: "https://oman-akot-site.vercel.app:3000", // Allow only the frontend URL to access
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
@@ -301,5 +301,5 @@ app.put("/api/images/:id", async (req, res) => {
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on https://oman-akot-site.vercel.app:${PORT}`);
 });
