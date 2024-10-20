@@ -26,9 +26,13 @@ const UploadCV: React.FC = () => {
     formData.append("description", description);
 
     try {
-      await axios.post("http://localhost:8000/api/cv/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axios.post(
+        "https://oman-akot-site.vercel.app:8000/api/cv/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       alert("PDF uploaded successfully!");
     } catch (error) {
       console.error("Error uploading PDF:", error);

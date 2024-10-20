@@ -73,9 +73,12 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleUpdate = async (id: number) => {
     try {
-      await axios.put(`http://localhost:8000/api/images/${id}`, {
-        description: newDescription,
-      });
+      await axios.put(
+        `https://oman-akot-site.vercel.app:8000/api/images/${id}`,
+        {
+          description: newDescription,
+        }
+      );
       setImages(
         images.map((image) =>
           image.id === id ? { ...image, description: newDescription } : image
@@ -89,7 +92,9 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8000/api/images/${id}`);
+      await axios.delete(
+        `https://oman-akot-site.vercel.app:8000/api/images/${id}`
+      );
       setImages(images.filter((image) => image.id !== id));
     } catch (error) {
       console.error("Error deleting image:", error);
@@ -125,9 +130,12 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
       if (isAdmin) {
         try {
           const reorderedIds = reorderedImages.map((image) => image.id);
-          await axios.put("http://localhost:8000/imageRoute/reorder", {
-            reorderedIds,
-          });
+          await axios.put(
+            "https://oman-akot-site.vercel.app:8000/imageRoute/reorder",
+            {
+              reorderedIds,
+            }
+          );
         } catch (error) {
           console.error("Error updating image order:", error);
         }
@@ -137,7 +145,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
   );
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/images")
+    fetch("https://oman-akot-site.vercel.app:8000/api/images")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

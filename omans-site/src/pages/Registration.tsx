@@ -13,11 +13,14 @@ const RegisterPage: React.FC = () => {
     console.log(username, password, role);
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/auth/register", {
-        username: username,
-        password: password,
-        role: role,
-      });
+      const response = await axios.post(
+        "https://oman-akot-site.vercel.app:8000/auth/register",
+        {
+          username: username,
+          password: password,
+          role: role,
+        }
+      );
 
       setMessage("Registration successful!");
       // Redirect to login or another page

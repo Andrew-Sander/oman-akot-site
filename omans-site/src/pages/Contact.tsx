@@ -34,7 +34,7 @@ const ContactForm: React.FC = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/send-email",
+        "https://oman-akot-site.vercel.app:8000/api/send-email",
         payload,
         {
           headers: {

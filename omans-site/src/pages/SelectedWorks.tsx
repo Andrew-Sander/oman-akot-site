@@ -56,7 +56,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/selected-works")
+    fetch("https://oman-akot-site.vercel.app:8000/api/selected-works")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -102,11 +102,14 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   const handleUpdate = async (id: number) => {
     try {
       const image = images.find((img) => img.id === id);
-      await axios.put(`http://localhost:8000/api/selected-works/${id}`, {
-        description: newDescription,
-        title: image?.title,
-        imageUrl: image?.imageUrl,
-      });
+      await axios.put(
+        `https://oman-akot-site.vercel.app:8000/api/selected-works/${id}`,
+        {
+          description: newDescription,
+          title: image?.title,
+          imageUrl: image?.imageUrl,
+        }
+      );
       setImages(
         images.map((image) =>
           image.id === id ? { ...image, description: newDescription } : image
@@ -120,7 +123,9 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8000/api/selected-works/${id}`);
+      await axios.delete(
+        `https://oman-akot-site.vercel.app:8000/api/selected-works/${id}`
+      );
       setImages(images.filter((image) => image.id !== id));
     } catch (error) {
       console.error("Error deleting selected work:", error);
@@ -180,9 +185,12 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
       if (isAdmin) {
         try {
           const reorderedIds = reorderedImages.map((image) => image.id);
-          await axios.put("http://localhost:8000/api/selected-works/reorder", {
-            reorderedIds,
-          });
+          await axios.put(
+            "https://oman-akot-site.vercel.app:8000/api/selected-works/reorder",
+            {
+              reorderedIds,
+            }
+          );
         } catch (error) {
           console.error("Error updating selected works order:", error);
         }

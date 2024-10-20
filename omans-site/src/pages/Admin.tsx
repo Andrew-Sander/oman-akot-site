@@ -82,7 +82,7 @@ const AdminPage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/upload",
+        "https://oman-akot-site.vercel.app:8000/upload",
         formData,
         {
           headers: {
@@ -123,7 +123,7 @@ const AdminPage: React.FC = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8000/admin/dashboard",
+          "https://oman-akot-site.vercel.app:8000/admin/dashboard",
           {
             headers: { Authorization: token },
           }
@@ -142,7 +142,9 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/images");
+        const response = await axios.get(
+          "https://oman-akot-site.vercel.app:8000/api/images"
+        );
         setImages(response.data);
       } catch (error) {
         console.error("Error fetching gallery images:", error);
@@ -156,7 +158,7 @@ const AdminPage: React.FC = () => {
     if (!selectedImage) return;
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/settings/background-image",
+        "https://oman-akot-site.vercel.app:8000/api/settings/background-image",
         { imageUrl: selectedImage }
       );
       console.log("Background image set:", response.data);
@@ -171,7 +173,9 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/bio");
+        const response = await axios.get(
+          "https://oman-akot-site.vercel.app:8000/api/bio"
+        );
         setBio(response.data.bio?.bioText || "");
         setNewBio(response.data.bio?.bioText || "");
         setDefaultProfilePicture(response.data.bio?.profilePictureUrl || "");
@@ -185,10 +189,13 @@ const AdminPage: React.FC = () => {
 
   const handleBioUpdate = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/api/bio", {
-        bioText: newBio,
-        profilePictureUrl: defaultProfilePicture,
-      });
+      const response = await axios.post(
+        "https://oman-akot-site.vercel.app:8000/api/bio",
+        {
+          bioText: newBio,
+          profilePictureUrl: defaultProfilePicture,
+        }
+      );
       setBio(response.data.bioText);
       setEditMode(false);
     } catch (error) {
@@ -198,10 +205,13 @@ const AdminPage: React.FC = () => {
 
   const handleProfilePictureUpdate = async (imageUrl: string) => {
     try {
-      const response = await axios.post("http://localhost:8000/api/bio", {
-        bioText: bio, // Preserve the existing bio text
-        profilePictureUrl: imageUrl,
-      });
+      const response = await axios.post(
+        "https://oman-akot-site.vercel.app:8000/api/bio",
+        {
+          bioText: bio, // Preserve the existing bio text
+          profilePictureUrl: imageUrl,
+        }
+      );
       setDefaultProfilePicture(response.data.profilePictureUrl);
     } catch (error) {
       console.error("Error updating profile picture:", error);
@@ -217,7 +227,7 @@ const AdminPage: React.FC = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/profile-picture",
+          "https://oman-akot-site.vercel.app:8000/api/profile-picture",
           formData,
           {
             headers: {
@@ -240,7 +250,7 @@ const AdminPage: React.FC = () => {
   const fetchProfilePictures = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/profile-pictures"
+        "https://oman-akot-site.vercel.app:8000/api/profile-pictures"
       );
       setProfilePictures(response.data);
     } catch (error) {
