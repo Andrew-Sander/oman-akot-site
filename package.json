@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "concurrently \"npm run start --prefix omans-site\" \"npm run start --prefix server\"",
-    "build": "CI=false npm run build --prefix omans-site && npm run build --prefix server",
+    "build": "npm run build --prefix omans-site && npm run build --prefix server",
     "build:omans-site": "npm run build --prefix omans-site",
     "build:server": "npm run build --prefix server"
   },
