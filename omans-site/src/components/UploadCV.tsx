@@ -26,7 +26,7 @@ const UploadCV: React.FC = () => {
     formData.append("description", description);
 
     try {
-      await axios.post("/api/api/cv/upload", formData, {
+      await axios.post("/api/cv/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("PDF uploaded successfully!");

@@ -22,7 +22,7 @@ const BioPage: React.FC = () => {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const response = await axios.get("/api/api/bio");
+        const response = await axios.get("/api/bio");
         setBio(response.data.bio?.bioText || "");
         setDefaultProfilePicture(response.data.bio?.profilePictureUrl || "");
       } catch (error) {

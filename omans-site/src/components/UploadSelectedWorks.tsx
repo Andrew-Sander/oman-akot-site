@@ -34,7 +34,7 @@ const UploadSelectedWorks: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "/api/api/selected-works/upload",
+        "/api/selected-works/upload",
         formData,
         {
           headers: {

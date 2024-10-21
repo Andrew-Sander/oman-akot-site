@@ -73,7 +73,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleUpdate = async (id: number) => {
     try {
-      await axios.put(`/api/api/images/${id}`, {
+      await axios.put(`/api/images/${id}`, {
         description: newDescription,
       });
       setImages(
@@ -89,7 +89,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/api/api/images/${id}`);
+      await axios.delete(`/api/images/${id}`);
       setImages(images.filter((image) => image.id !== id));
     } catch (error) {
       console.error("Error deleting image:", error);
@@ -125,7 +125,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
       if (isAdmin) {
         try {
           const reorderedIds = reorderedImages.map((image) => image.id);
-          await axios.put("/api/imageRoute/reorder", {
+          await axios.put("/imageRoute/reorder", {
             reorderedIds,
           });
         } catch (error) {
@@ -137,7 +137,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
   );
 
   useEffect(() => {
-    fetch("/api/api/images")
+    fetch("/api/images")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

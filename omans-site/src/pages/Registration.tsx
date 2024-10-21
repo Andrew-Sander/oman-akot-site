@@ -13,7 +13,7 @@ const RegisterPage: React.FC = () => {
     console.log(username, password, role);
     e.preventDefault();
     try {
-      const response = await axios.post("/api/auth/register", {
+      const response = await axios.post("auth/register", {
         username: username,
         password: password,
         role: role,

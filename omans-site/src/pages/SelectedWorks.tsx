@@ -56,7 +56,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   };
 
   useEffect(() => {
-    fetch("/api/api/selected-works")
+    fetch("/api/selected-works")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -102,7 +102,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   const handleUpdate = async (id: number) => {
     try {
       const image = images.find((img) => img.id === id);
-      await axios.put(`/api/api/selected-works/${id}`, {
+      await axios.put(`/api/selected-works/${id}`, {
         description: newDescription,
         title: image?.title,
         imageUrl: image?.imageUrl,
@@ -120,7 +120,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/api/api/selected-works/${id}`);
+      await axios.delete(`/api/selected-works/${id}`);
       setImages(images.filter((image) => image.id !== id));
     } catch (error) {
       console.error("Error deleting selected work:", error);
@@ -180,7 +180,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
       if (isAdmin) {
         try {
           const reorderedIds = reorderedImages.map((image) => image.id);
-          await axios.put("/api/api/selected-works/reorder", {
+          await axios.put("/api/selected-works/reorder", {
             reorderedIds,
           });
         } catch (error) {

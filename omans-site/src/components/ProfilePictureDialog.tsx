@@ -32,7 +32,7 @@ const ProfilePictureDialog: React.FC<ProfilePictureDialogProps> = ({
 }) => {
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/api/api/profile-pictures/${id}`);
+      await axios.delete(`/api/profile-pictures/${id}`);
       setProfilePictures((prevPictures) =>
         prevPictures.filter((picture) => picture.id !== id)
       );

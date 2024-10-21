@@ -33,7 +33,7 @@ const ContactForm: React.FC = () => {
     };
 
     try {
-      const res = await axios.post("/api/api/send-email", payload, {
+      const res = await axios.post("/api/send-email", payload, {
         headers: {
           "Content-Type": "application/json",
         },

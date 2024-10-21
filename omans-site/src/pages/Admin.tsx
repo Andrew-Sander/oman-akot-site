@@ -81,7 +81,7 @@ const AdminPage: React.FC = () => {
     formData.append("title", title);
 
     try {
-      const response = await axios.post("/api/upload", formData, {
+      const response = await axios.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -118,7 +118,7 @@ const AdminPage: React.FC = () => {
           return;
         }
 
-        const response = await axios.get("/api/admin/dashboard", {
+        const response = await axios.get("/admin/dashboard", {
           headers: { Authorization: token },
         });
 
@@ -135,7 +135,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get("/api/api/images");
+        const response = await axios.get("/api/images");
         setImages(response.data);
       } catch (error) {
         console.error("Error fetching gallery images:", error);
@@ -148,7 +148,7 @@ const AdminPage: React.FC = () => {
   const handleSetBackground = async () => {
     if (!selectedImage) return;
     try {
-      const response = await axios.post("/api/api/settings/background-image", {
+      const response = await axios.post("/api/settings/background-image", {
         imageUrl: selectedImage,
       });
       console.log("Background image set:", response.data);
@@ -163,7 +163,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const response = await axios.get("/api/api/bio");
+        const response = await axios.get("/api/bio");
         setBio(response.data.bio?.bioText || "");
         setNewBio(response.data.bio?.bioText || "");
         setDefaultProfilePicture(response.data.bio?.profilePictureUrl || "");
@@ -208,15 +208,11 @@ const AdminPage: React.FC = () => {
       formData.append("image", event.target.files[0]);
 
       try {
-        const response = await axios.post(
-          "/api/api/profile-picture",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const response = await axios.post("/api/profile-picture", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         fetchProfilePictures();
         // setProfilePictures((prev) => [
         //   ...prev,
@@ -231,7 +227,7 @@ const AdminPage: React.FC = () => {
 
   const fetchProfilePictures = useCallback(async () => {
     try {
-      const response = await axios.get("/api/api/profile-pictures");
+      const response = await axios.get("/api/profile-pictures");
       setProfilePictures(response.data);
     } catch (error) {
       console.error("Error fetching profile pictures:", error);
