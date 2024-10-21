@@ -16,11 +16,12 @@ const AWS = require("aws-sdk");
 const cors = require("cors");
 const app = express();
 
-const corsOptions = {
-  origin: "https://oman-akot-site.vercel.app", // allow only the frontend origin
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "https://oman-akot-site.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
+  })
+);
 // Middleware to parse JSON bodies
 app.use(express.json());
 // Middleware to parse URL-encoded bodies
