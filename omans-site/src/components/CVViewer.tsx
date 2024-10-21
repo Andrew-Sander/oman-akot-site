@@ -26,7 +26,7 @@ const CVViewer: React.FC = () => {
   const minMax = useWindowSize();
 
   useEffect(() => {
-    fetch("https://oman-akot-site.vercel.app:8000/api/cv")
+    fetch("/api/api/cv")
       .then((response) => response.json())
       .then((data) => {
         setDocuments(data);
@@ -39,9 +39,7 @@ const CVViewer: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this CV?")) {
       try {
-        await axios.delete(
-          `https://oman-akot-site.vercel.app:8000/api/cv/${id}`
-        );
+        await axios.delete(`/api/api/cv/${id}`);
         setDocuments((prevDocuments) =>
           prevDocuments.filter((document) => document.id !== id)
         );

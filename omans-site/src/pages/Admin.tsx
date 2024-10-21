@@ -81,15 +81,11 @@ const AdminPage: React.FC = () => {
     formData.append("title", title);
 
     try {
-      const response = await axios.post(
-        "https://oman-akot-site.vercel.app:8000/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post("/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setUploadStatus(`File uploaded successfully`);
       setDescription("");
       setTitle("");
@@ -122,12 +118,9 @@ const AdminPage: React.FC = () => {
           return;
         }
 
-        const response = await axios.get(
-          "https://oman-akot-site.vercel.app:8000/admin/dashboard",
-          {
-            headers: { Authorization: token },
-          }
-        );
+        const response = await axios.get("/api/admin/dashboard", {
+          headers: { Authorization: token },
+        });
 
         setData(response.data);
         setLoading(false);
@@ -142,9 +135,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get(
-          "https://oman-akot-site.vercel.app:8000/api/images"
-        );
+        const response = await axios.get("/api/api/images");
         setImages(response.data);
       } catch (error) {
         console.error("Error fetching gallery images:", error);
@@ -157,10 +148,9 @@ const AdminPage: React.FC = () => {
   const handleSetBackground = async () => {
     if (!selectedImage) return;
     try {
-      const response = await axios.post(
-        "https://oman-akot-site.vercel.app:8000/api/settings/background-image",
-        { imageUrl: selectedImage }
-      );
+      const response = await axios.post("/api/api/settings/background-image", {
+        imageUrl: selectedImage,
+      });
       console.log("Background image set:", response.data);
       setDialogOpen(false);
       // Handle successful setting, e.g., display success message or refresh page
@@ -173,9 +163,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const response = await axios.get(
-          "https://oman-akot-site.vercel.app:8000/api/bio"
-        );
+        const response = await axios.get("/api/api/bio");
         setBio(response.data.bio?.bioText || "");
         setNewBio(response.data.bio?.bioText || "");
         setDefaultProfilePicture(response.data.bio?.profilePictureUrl || "");
@@ -189,13 +177,10 @@ const AdminPage: React.FC = () => {
 
   const handleBioUpdate = async () => {
     try {
-      const response = await axios.post(
-        "https://oman-akot-site.vercel.app:8000/api/bio",
-        {
-          bioText: newBio,
-          profilePictureUrl: defaultProfilePicture,
-        }
-      );
+      const response = await axios.post("/api/bio", {
+        bioText: newBio,
+        profilePictureUrl: defaultProfilePicture,
+      });
       setBio(response.data.bioText);
       setEditMode(false);
     } catch (error) {
@@ -205,13 +190,10 @@ const AdminPage: React.FC = () => {
 
   const handleProfilePictureUpdate = async (imageUrl: string) => {
     try {
-      const response = await axios.post(
-        "https://oman-akot-site.vercel.app:8000/api/bio",
-        {
-          bioText: bio, // Preserve the existing bio text
-          profilePictureUrl: imageUrl,
-        }
-      );
+      const response = await axios.post("/api/bio", {
+        bioText: bio, // Preserve the existing bio text
+        profilePictureUrl: imageUrl,
+      });
       setDefaultProfilePicture(response.data.profilePictureUrl);
     } catch (error) {
       console.error("Error updating profile picture:", error);
@@ -227,7 +209,7 @@ const AdminPage: React.FC = () => {
 
       try {
         const response = await axios.post(
-          "https://oman-akot-site.vercel.app:8000/api/profile-picture",
+          "/api/api/profile-picture",
           formData,
           {
             headers: {
@@ -249,9 +231,7 @@ const AdminPage: React.FC = () => {
 
   const fetchProfilePictures = useCallback(async () => {
     try {
-      const response = await axios.get(
-        "https://oman-akot-site.vercel.app:8000/api/profile-pictures"
-      );
+      const response = await axios.get("/api/api/profile-pictures");
       setProfilePictures(response.data);
     } catch (error) {
       console.error("Error fetching profile pictures:", error);

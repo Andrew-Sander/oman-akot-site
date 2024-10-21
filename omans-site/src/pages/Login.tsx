@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://oman-akot-site.vercel.app:8000/auth/login",
+        "/api/auth/login",
         {
           username,
           password,

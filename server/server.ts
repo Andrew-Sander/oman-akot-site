@@ -17,7 +17,7 @@ const cors = require("cors");
 const app = express();
 
 const corsOptions = {
-  origin: "https://oman-akot-site.vercel.app:3000", // Allow only the frontend URL to access
+  origin: "https://oman-akot-site.vercel.app", // Allow only the frontend URL to access
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 

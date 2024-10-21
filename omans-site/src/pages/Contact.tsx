@@ -33,15 +33,11 @@ const ContactForm: React.FC = () => {
     };
 
     try {
-      const res = await axios.post(
-        "https://oman-akot-site.vercel.app:8000/api/send-email",
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await axios.post("/api/api/send-email", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       setResponse(res.data.message);
     } catch (error) {
