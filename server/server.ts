@@ -187,11 +187,12 @@ app.get("/api/settings/background-image", async (req, res) => {
 
 app.get("/api/images", async (req, res) => {
   try {
-    const images = await Gallery.findAll({ order: [["order", "ASC"]] }); // Fetch all images
+    console.log("Fetching images from database...");
+    const images = await Gallery.findAll({ order: [["order", "ASC"]] });
     res.json(images);
-  } catch (error) {
-    console.error("Failed to retrieve images:", error);
-    res.status(500).send(error);
+  } catch (error: any) {
+    console.error("Error fetching images:", error.stack); // Log full error stack
+    res.status(500).send({ message: "Server error", error: error.message });
   }
 });
 
