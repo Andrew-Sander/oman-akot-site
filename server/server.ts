@@ -189,7 +189,7 @@ app.get("/api/images", async (req, res) => {
     res.json(images);
   } catch (error) {
     console.error("Failed to retrieve images:", error);
-    res.status(500).send("Server error");
+    res.status(500).send(error);
   }
 });
 
