@@ -8,6 +8,12 @@ if (!process.env.DB_URL) {
 }
 const sequelize = new Sequelize(process.env.DB_URL, {
   dialect: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // For self-signed certificates
+    },
+  },
   logging: false,
 });
 
