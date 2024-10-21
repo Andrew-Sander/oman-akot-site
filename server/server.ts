@@ -17,7 +17,7 @@ const cors = require("cors");
 const app = express();
 
 const corsOptions = {
-  origin: ["https://oman-akot-site.vercel.app"], // allow only the frontend origin
+  origin: "https://oman-akot-site.vercel.app", // allow only the frontend origin
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
