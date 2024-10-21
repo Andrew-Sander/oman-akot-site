@@ -73,9 +73,12 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleUpdate = async (id: number) => {
     try {
-      await axios.put(`https://oman-akot-site.vercel.app/api/images/${id}`, {
-        description: newDescription,
-      });
+      await axios.put(
+        `https://oman-akot-site-server.vercel.app/api/images/${id}`,
+        {
+          description: newDescription,
+        }
+      );
       setImages(
         images.map((image) =>
           image.id === id ? { ...image, description: newDescription } : image
@@ -89,7 +92,9 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`https://oman-akot-site.vercel.app/api/images/${id}`);
+      await axios.delete(
+        `https://oman-akot-site-server.vercel.app/api/images/${id}`
+      );
       setImages(images.filter((image) => image.id !== id));
     } catch (error) {
       console.error("Error deleting image:", error);
@@ -137,7 +142,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
   );
 
   useEffect(() => {
-    fetch("https://oman-akot-site.vercel.app/api/images")
+    fetch("https://oman-akot-site-server.vercel.app/api/images")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
