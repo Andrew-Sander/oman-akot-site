@@ -58,6 +58,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   useEffect(() => {
     fetch("/api/selected-works")
       .then((response) => {
+        console.log(response);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
