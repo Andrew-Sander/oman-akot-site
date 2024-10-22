@@ -357,7 +357,12 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
         selectedImage && (
           <Stack direction={"column"} alignItems={"center"} flex={1}>
             {/* Large Image Display */}
-            <Box height={"80vh"} width={"100%"}>
+            <Box
+              height={
+                windowHeight === "sm" || windowHeight === "xs" ? "50vh" : "80vh"
+              }
+              width={"100%"}
+            >
               <Stack
                 direction="row"
                 alignItems="center"
@@ -400,7 +405,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 position: "fixed",
-                bottom: 0,
+                bottom: windowWidth === "sm" || windowWidth === "xs" ? 2 : 0,
               }}
             >
               <div
@@ -431,10 +436,10 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                       cursor: "pointer",
                       boxShadow:
                         selectedImage?.id === image.id
-                          ? "0px 4px 20px rgba(131, 78, 175, 0.6)" // Soft purple glow when selected
-                          : "0px 2px 8px rgba(0, 0, 0, 0.2)", // Regular box-shadow for non-selected
+                          ? "4px 4px 20px rgba(131, 78, 175, 0.6)" // Soft purple glow when selected
+                          : "4px 2px 8px rgba(0, 0, 0, 0.2)", // Regular box-shadow for non-selected
                       objectFit: "cover",
-                      margin: "0 10px",
+                      margin: "10px",
                       transition: "box-shadow 0.3s ease", // Smooth transition effect
                     }}
                   />
