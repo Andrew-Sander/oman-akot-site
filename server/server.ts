@@ -18,11 +18,19 @@ const app = express();
 const path = require("path");
 
 app.use(
-  cors({
-    origin: "https://omans-site-ccfb2e7a394c.herokuapp.com",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  cors(
+    {
+      origin: "https://www.omanjakot.com",
+      // origin: "http://localhost:3000",
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    },
+    {
+      origin: "https://omans-site-ccfb2e7a394c.herokuapp.com/",
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    }
+  )
 );
 
 // Middleware to parse JSON bodies

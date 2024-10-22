@@ -26,7 +26,7 @@ const CVViewer: React.FC = () => {
   const minMax = useWindowSize();
 
   useEffect(() => {
-    fetch("/api/cv")
+    fetch(`${domainURL}/api/cv`)
       .then((response) => response.json())
       .then((data) => {
         setDocuments(data);

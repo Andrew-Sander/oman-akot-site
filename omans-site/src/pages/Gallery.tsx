@@ -345,8 +345,10 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
             mb: 1,
             right: 5,
             top: 0,
+            zIndex: 9999,
           }}
           onClick={() => setDialogOpen(false)}
+          onTouchEnd={() => setDialogOpen(false)}
         >
           <Close color="action" />
         </IconButton>

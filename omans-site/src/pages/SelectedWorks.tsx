@@ -377,25 +377,40 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
               <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
                 sx={{ width: "100%", overflow: "hidden", height: "100%" }}
               >
                 <IconButton onClick={() => scrollThumbnails("left")}>
                   <ChevronLeft />
                 </IconButton>
-                <Box sx={{ mb: 4, width: "100%", textAlign: "center" }}>
+                <Box
+                  sx={{
+                    mb: 4,
+                    width: "100%",
+                    textAlign: "center",
+                    height: "70vh",
+                    overflowY: "auto",
+                  }}
+                >
                   <CardMedia
                     component="img"
                     image={selectedImage.imageUrl}
                     alt={selectedImage.title}
                     sx={{
-                      height: "70%",
-                      maxHeight: "70vh",
+                      height: "60vh",
                       objectFit: "contain",
                       margin: "0 auto",
                     }}
                   />
-                  <Typography variant="h4" sx={{ mt: 2 }}>
+                  <Typography
+                    variant={
+                      windowWidth === "sm" ||
+                      windowWidth === "xs" ||
+                      windowHeight === "sm" ||
+                      windowHeight === "xs"
+                        ? "h6"
+                        : "h4"
+                    }
+                  >
                     {selectedImage.title}
                   </Typography>
                   <Typography variant="body1" sx={{ mt: 1 }}>
@@ -417,7 +432,14 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 position: "fixed",
-                bottom: windowWidth === "sm" || windowWidth === "xs" ? 3 : 1,
+                bottom:
+                  windowWidth === "sm" ||
+                  windowWidth === "xs" ||
+                  windowHeight === "sm" ||
+                  windowHeight === "xs"
+                    ? 2
+                    : 1,
+                marginX: 2,
               }}
             >
               <div
@@ -439,9 +461,17 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                     ref={(el) => (thumbnailRefs.current[index] = el)} // Add ref for scrolling
                     sx={{
                       width:
-                        windowWidth === "sm" || windowWidth === "xs" ? 60 : 100,
+                        windowWidth === "sm" ||
+                        windowWidth === "xs" ||
+                        windowHeight === "sm" ||
+                        windowHeight === "xs"
+                          ? 60
+                          : 100,
                       height:
-                        windowHeight === "sm" || windowHeight === "xs"
+                        windowWidth === "sm" ||
+                        windowWidth === "xs" ||
+                        windowHeight === "sm" ||
+                        windowHeight === "xs"
                           ? 60
                           : 100,
                       cursor: "pointer",
