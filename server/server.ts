@@ -15,6 +15,7 @@ const AWS = require("aws-sdk");
 
 const cors = require("cors");
 const app = express();
+const path = require("path");
 
 app.use(
   cors({
@@ -170,6 +171,13 @@ app.post("/api/profile-picture", upload.single("image"), async (req, res) => {
     console.error("Error uploading profile picture:", error);
     res.status(500).send("Error uploading profile picture");
   }
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "omans-site/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "omans-site/build", "index.html"));
 });
 
 // Endpoint to get the current background image URL
