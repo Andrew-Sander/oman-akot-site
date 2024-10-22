@@ -366,7 +366,11 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
             {/* Large Image Display */}
             <Box
               height={
-                windowHeight === "sm" || windowHeight === "xs" ? "70vh" : "80vh"
+                windowHeight === "sm"
+                  ? "60%"
+                  : windowHeight === "xs"
+                    ? "50%"
+                    : "80%"
               }
               width={"100%"}
             >
@@ -422,6 +426,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                   display: "flex",
                   overflowX: "auto",
                   scrollBehavior: "smooth",
+                  minHeight: "60px",
                 }}
               >
                 {images.map((image, index) => (
