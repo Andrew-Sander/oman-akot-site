@@ -373,6 +373,10 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
               //       : "80%"
               // }
               width={"100%"}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               <Stack
                 direction="row"
