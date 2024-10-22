@@ -173,13 +173,6 @@ app.post("/api/profile-picture", upload.single("image"), async (req, res) => {
   }
 });
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../omans-site/build")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
-});
-
 // Endpoint to get the current background image URL
 app.get("/api/settings/background-image", async (req, res) => {
   try {
@@ -308,6 +301,13 @@ app.put("/api/images/:id", async (req, res) => {
     console.error("Error updating image description:", error);
     res.status(500).send("Error updating image description");
   }
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../omans-site/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
 });
 
 const PORT = process.env.PORT || 8000;
