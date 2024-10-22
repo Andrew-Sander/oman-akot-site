@@ -174,10 +174,10 @@ app.post("/api/profile-picture", upload.single("image"), async (req, res) => {
 });
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "omans-site/build")));
+app.use(express.static(path.join(__dirname, "../omans-site/build")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "omans-site/build", "index.html"));
+  res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
 });
 
 // Endpoint to get the current background image URL
