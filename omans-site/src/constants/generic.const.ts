@@ -14,4 +14,5 @@ export const breakpoints: Breakpoint = {
   xl,
 };
 
-export const domainURL = "https://omans-site-ccfb2e7a394c.herokuapp.com";
+export const domainURL = "";
+//"https://omans-site-ccfb2e7a394c.herokuapp.com"
