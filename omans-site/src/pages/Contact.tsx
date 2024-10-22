@@ -88,7 +88,7 @@ const ContactForm: React.FC = () => {
         required
       />
       <ReCAPTCHA
-        sitekey="6LchldcpAAAAACYxEGwBxakqUSUtS23XGsuUaNna"
+        sitekey="6LfuzGgqAAAAAAxprngc30jKm42CYa0qakm9RDBl"
         onChange={handleCaptchaChange}
       />
       <Button
