@@ -9,6 +9,7 @@ import {
   Input,
   TextField,
 } from "@mui/material";
+import { domainURL } from "../constants/generic.const";
 
 const UploadSelectedWorks: React.FC = () => {
   //   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ const UploadSelectedWorks: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "/api/selected-works/upload",
+        `${domainURL}/api/selected-works/upload`,
         formData,
         {
           headers: {
@@ -51,8 +52,6 @@ const UploadSelectedWorks: React.FC = () => {
       console.error("Upload error:", error);
     }
   };
-
-  //   if (loading) return <CircularProgress />;
 
   return (
     <Box sx={{ m: 4 }}>

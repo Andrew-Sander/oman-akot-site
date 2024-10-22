@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { colourWhite } from "../constants/colors.const";
 import { useNavigate } from "react-router-dom";
+import { domainURL } from "../constants/generic.const";
 
 const BioPage: React.FC = () => {
   const [bio, setBio] = useState<string>("");
@@ -22,7 +23,7 @@ const BioPage: React.FC = () => {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const response = await axios.get("/api/bio");
+        const response = await axios.get(`${domainURL}/api/bio`);
         setBio(response.data.bio?.bioText || "");
         setDefaultProfilePicture(response.data.bio?.profilePictureUrl || "");
       } catch (error) {

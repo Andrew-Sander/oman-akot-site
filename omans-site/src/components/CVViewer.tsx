@@ -5,7 +5,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import { useWindowSize } from "../hooks/navbar.hooks";
-import { breakpoints } from "../constants/generic.const";
+import { breakpoints, domainURL } from "../constants/generic.const";
 
 // Set the workerSrc from the local pdfjs-dist version
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
@@ -39,7 +39,7 @@ const CVViewer: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this CV?")) {
       try {
-        await axios.delete(`/api/cv/${id}`);
+        await axios.delete(`${domainURL}/api/cv/${id}`);
         setDocuments((prevDocuments) =>
           prevDocuments.filter((document) => document.id !== id)
         );

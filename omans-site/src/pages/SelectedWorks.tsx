@@ -26,6 +26,7 @@ import {
   DraggingStyle,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
+import { domainURL } from "../constants/generic.const";
 
 interface Image {
   title: string;
@@ -103,7 +104,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   const handleUpdate = async (id: number) => {
     try {
       const image = images.find((img) => img.id === id);
-      await axios.put(`/api/selected-works/${id}`, {
+      await axios.put(`${domainURL}/api/selected-works/${id}`, {
         description: newDescription,
         title: image?.title,
         imageUrl: image?.imageUrl,
@@ -121,7 +122,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/api/selected-works/${id}`);
+      await axios.delete(`${domainURL}/api/selected-works/${id}`);
       setImages(images.filter((image) => image.id !== id));
     } catch (error) {
       console.error("Error deleting selected work:", error);
@@ -181,7 +182,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
       if (isAdmin) {
         try {
           const reorderedIds = reorderedImages.map((image) => image.id);
-          await axios.put("/api/selected-works/reorder", {
+          await axios.put(`${domainURL}/api/selected-works/reorder`, {
             reorderedIds,
           });
         } catch (error) {

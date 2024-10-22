@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { domainURL } from "../constants/generic.const";
 
 const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ const RegisterPage: React.FC = () => {
     console.log(username, password, role);
     e.preventDefault();
     try {
-      const response = await axios.post("auth/register", {
+      const response = await axios.post(`${domainURL}auth/register`, {
         username: username,
         password: password,
         role: role,

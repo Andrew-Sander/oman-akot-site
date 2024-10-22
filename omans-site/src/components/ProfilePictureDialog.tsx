@@ -14,6 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { ProfilePicture } from "../interfaces/generic.interface";
+import { domainURL } from "../constants/generic.const";
 
 interface ProfilePictureDialogProps {
   open: boolean;
@@ -32,7 +33,7 @@ const ProfilePictureDialog: React.FC<ProfilePictureDialogProps> = ({
 }) => {
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/api/profile-pictures/${id}`);
+      await axios.delete(`${domainURL}/api/profile-pictures/${id}`);
       setProfilePictures((prevPictures) =>
         prevPictures.filter((picture) => picture.id !== id)
       );

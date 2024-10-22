@@ -4,6 +4,7 @@ import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { domainURL } from "../constants/generic.const";
 
 const ContactForm: React.FC = () => {
   const [name, setName] = useState("");
@@ -33,7 +34,7 @@ const ContactForm: React.FC = () => {
     };
 
     try {
-      const res = await axios.post("/api/send-email", payload, {
+      const res = await axios.post(`${domainURL}/api/send-email`, payload, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -87,7 +88,7 @@ const ContactForm: React.FC = () => {
         required
       />
       <ReCAPTCHA
-        sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+        sitekey="6LchldcpAAAAACYxEGwBxakqUSUtS23XGsuUaNna"
         onChange={handleCaptchaChange}
       />
       <Button

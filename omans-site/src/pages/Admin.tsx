@@ -31,6 +31,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import UploadSelectedWorks from "../components/UploadSelectedWorks";
 import SelectedWorks from "./SelectedWorks";
 import UploadCV from "../components/UploadCV";
+import { domainURL } from "../constants/generic.const";
 
 interface BioData {
   bioText: string;
@@ -81,7 +82,7 @@ const AdminPage: React.FC = () => {
     formData.append("title", title);
 
     try {
-      const response = await axios.post("/upload", formData, {
+      const response = await axios.post(`${domainURL}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -118,7 +119,7 @@ const AdminPage: React.FC = () => {
           return;
         }
 
-        const response = await axios.get("/admin/dashboard", {
+        const response = await axios.get(`${domainURL}/admin/dashboard`, {
           headers: { Authorization: token },
         });
 
@@ -135,7 +136,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get("/api/images");
+        const response = await axios.get(`${domainURL}/api/images`);
         setImages(response.data);
       } catch (error) {
         console.error("Error fetching gallery images:", error);
@@ -148,9 +149,12 @@ const AdminPage: React.FC = () => {
   const handleSetBackground = async () => {
     if (!selectedImage) return;
     try {
-      const response = await axios.post("/api/settings/background-image", {
-        imageUrl: selectedImage,
-      });
+      const response = await axios.post(
+        `${domainURL}/api/settings/background-image`,
+        {
+          imageUrl: selectedImage,
+        }
+      );
       console.log("Background image set:", response.data);
       setDialogOpen(false);
       // Handle successful setting, e.g., display success message or refresh page
@@ -163,7 +167,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchBio = async () => {
       try {
-        const response = await axios.get("/api/bio");
+        const response = await axios.get(`${domainURL}/api/bio`);
         setBio(response.data.bio?.bioText || "");
         setNewBio(response.data.bio?.bioText || "");
         setDefaultProfilePicture(response.data.bio?.profilePictureUrl || "");
@@ -177,7 +181,7 @@ const AdminPage: React.FC = () => {
 
   const handleBioUpdate = async () => {
     try {
-      const response = await axios.post("/api/bio", {
+      const response = await axios.post(`${domainURL}/api/bio`, {
         bioText: newBio,
         profilePictureUrl: defaultProfilePicture,
       });
@@ -190,7 +194,7 @@ const AdminPage: React.FC = () => {
 
   const handleProfilePictureUpdate = async (imageUrl: string) => {
     try {
-      const response = await axios.post("/api/bio", {
+      const response = await axios.post(`${domainURL}/api/bio`, {
         bioText: bio, // Preserve the existing bio text
         profilePictureUrl: imageUrl,
       });
@@ -208,11 +212,15 @@ const AdminPage: React.FC = () => {
       formData.append("image", event.target.files[0]);
 
       try {
-        const response = await axios.post("/api/profile-picture", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const response = await axios.post(
+          `${domainURL}/api/profile-picture`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         fetchProfilePictures();
         // setProfilePictures((prev) => [
         //   ...prev,
@@ -227,7 +235,7 @@ const AdminPage: React.FC = () => {
 
   const fetchProfilePictures = useCallback(async () => {
     try {
-      const response = await axios.get("/api/profile-pictures");
+      const response = await axios.get(`${domainURL}/api/profile-pictures`);
       setProfilePictures(response.data);
     } catch (error) {
       console.error("Error fetching profile pictures:", error);

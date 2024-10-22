@@ -18,7 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://oman-akot-site.vercel.app",
+    origin: "https://omans-site-ccfb2e7a394c.herokuapp.com",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -302,7 +302,7 @@ app.put("/api/images/:id", async (req, res) => {
   }
 });
 
-// const PORT = process.env.PORT || 8000;
-// app.listen(PORT, () => {
-//   console.log(`Server running on https://oman-akot-site.vercel.app:${PORT}`);
-// });
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

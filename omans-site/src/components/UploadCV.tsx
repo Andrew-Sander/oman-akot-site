@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Button } from "@mui/material";
+import { domainURL } from "../constants/generic.const";
 
 const UploadCV: React.FC = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -26,7 +27,7 @@ const UploadCV: React.FC = () => {
     formData.append("description", description);
 
     try {
-      await axios.post("/api/cv/upload", formData, {
+      await axios.post(`${domainURL}/api/cv/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("PDF uploaded successfully!");

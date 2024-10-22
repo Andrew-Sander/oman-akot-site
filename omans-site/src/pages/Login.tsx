@@ -9,6 +9,7 @@ import {
   Box,
   Alert,
 } from "@mui/material";
+import { domainURL } from "../constants/generic.const";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/auth/login",
+        `${domainURL}/auth/login`,
         {
           username,
           password,
