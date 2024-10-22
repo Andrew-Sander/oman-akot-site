@@ -365,13 +365,13 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
           <Stack direction={"column"} alignItems={"center"} flex={1}>
             {/* Large Image Display */}
             <Box
-              height={
-                windowHeight === "sm"
-                  ? "60%"
-                  : windowHeight === "xs"
-                    ? "50%"
-                    : "80%"
-              }
+              // height={
+              //   windowHeight === "sm"
+              //     ? "60%"
+              //     : windowHeight === "xs"
+              //       ? "50%"
+              //       : "80%"
+              // }
               width={"100%"}
             >
               <Stack
