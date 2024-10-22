@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Box, ThemeProvider } from "@mui/material";
 import Navbar from "./components/Navbar";
-import RegisterPage from "./pages/Registration";
 import AdminPage from "./pages/Admin";
 import Login from "./pages/Login";
 import ContactForm from "./pages/Contact";
@@ -22,7 +21,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Gallery />} />
             <Route path="/bio" element={<BioPage />} />
-            <Route path="/register" element={<RegisterPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/contact" element={<ContactForm />} />

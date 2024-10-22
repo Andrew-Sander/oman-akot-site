@@ -8,13 +8,9 @@ import {
   Stack,
   IconButton,
   TextField,
-  DialogContent,
-  Dialog,
   Box,
+  CircularProgress,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { selectImage } from "../redux/imageSlice";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ChevronLeft, ChevronRight, Close, Save } from "@mui/icons-material";
@@ -27,6 +23,7 @@ import {
   NotDraggingStyle,
 } from "react-beautiful-dnd";
 import { domainURL } from "../constants/generic.const";
+import { useWindowSize } from "../hooks/navbar.hooks";
 
 interface Image {
   title: string;
@@ -50,6 +47,9 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   const thumbnailRefs = useRef<(HTMLImageElement | null)[]>([]); // For auto-scrolling
   const thumbnailContainerRef = useRef<HTMLDivElement>(null); // Ref to the thumbnails container
 
+  // custom hook
+  const { windowWidth, windowHeight } = useWindowSize();
+
   const handleEdit = (id: number) => {
     setEditId(id);
     const image = images.find((img) => img.id === id);
@@ -57,6 +57,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetch("/api/selected-works")
       .then((response) => {
         console.log(response);
@@ -193,12 +194,11 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
     [isAdmin, images]
   );
 
-  if (loading) {
-    return null;
-  }
+  if (loading) return <CircularProgress />;
 
   if (error) {
-    return <Typography>{error}</Typography>;
+    console.log(error);
+    return null;
   }
 
   return (
@@ -351,6 +351,8 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
             )}
           </Droppable>
         </DragDropContext>
+      ) : loading ? (
+        <CircularProgress />
       ) : (
         selectedImage && (
           <Stack direction={"column"} alignItems={"center"} flex={1}>
@@ -420,15 +422,20 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                     onClick={() => handleThumbnailClick(image)}
                     ref={(el) => (thumbnailRefs.current[index] = el)} // Add ref for scrolling
                     sx={{
-                      width: 100,
-                      height: 100,
+                      width:
+                        windowWidth === "sm" || windowWidth === "xs" ? 60 : 100,
+                      height:
+                        windowHeight === "sm" || windowHeight === "xs"
+                          ? 60
+                          : 100,
                       cursor: "pointer",
-                      border:
+                      boxShadow:
                         selectedImage?.id === image.id
-                          ? "3px solid #834eaf"
-                          : "none",
+                          ? "0px 4px 20px rgba(131, 78, 175, 0.6)" // Soft purple glow when selected
+                          : "0px 2px 8px rgba(0, 0, 0, 0.2)", // Regular box-shadow for non-selected
                       objectFit: "cover",
                       margin: "0 10px",
+                      transition: "box-shadow 0.3s ease", // Smooth transition effect
                     }}
                   />
                 ))}
