@@ -24,6 +24,7 @@ import {
 } from "react-beautiful-dnd";
 import { domainURL } from "../constants/generic.const";
 import { useWindowSize } from "../hooks/navbar.hooks";
+import { colourPrimary, colourSecondary } from "../constants/colors.const";
 
 interface Image {
   title: string;
@@ -58,9 +59,8 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   useEffect(() => {
     setLoading(true);
-    fetch("/api/selected-works")
+    fetch(`${domainURL}/api/selected-works`)
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -169,6 +169,13 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   useEffect(() => {
     setSelectedImage(images[0]);
   }, [images]);
+
+  useEffect(() => {
+    // Scroll the container to the start when it mounts
+    if (thumbnailContainerRef.current) {
+      thumbnailContainerRef.current.scrollLeft = 0; // Start at the beginning
+    }
+  }, []);
 
   const handleDragEnd = useCallback(
     async (result: DropResult) => {
@@ -359,7 +366,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
             {/* Large Image Display */}
             <Box
               height={
-                windowHeight === "sm" || windowHeight === "xs" ? "50vh" : "80vh"
+                windowHeight === "sm" || windowHeight === "xs" ? "70vh" : "80vh"
               }
               width={"100%"}
             >
@@ -378,6 +385,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                     image={selectedImage.imageUrl}
                     alt={selectedImage.title}
                     sx={{
+                      height: "70%",
                       maxHeight: "70vh",
                       objectFit: "contain",
                       margin: "0 auto",
@@ -405,7 +413,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 position: "fixed",
-                bottom: windowWidth === "sm" || windowWidth === "xs" ? 2 : 0,
+                bottom: windowWidth === "sm" || windowWidth === "xs" ? 3 : 1,
               }}
             >
               <div
@@ -413,9 +421,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                 style={{
                   display: "flex",
                   overflowX: "auto",
-                  justifyContent: "center",
                   scrollBehavior: "smooth",
-                  whiteSpace: "nowrap",
                 }}
               >
                 {images.map((image, index) => (
@@ -436,11 +442,12 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                       cursor: "pointer",
                       boxShadow:
                         selectedImage?.id === image.id
-                          ? "4px 4px 20px rgba(131, 78, 175, 0.6)" // Soft purple glow when selected
-                          : "4px 2px 8px rgba(0, 0, 0, 0.2)", // Regular box-shadow for non-selected
+                          ? `4px 4px 20px ${colourPrimary}`
+                          : undefined,
                       objectFit: "cover",
-                      margin: "10px",
-                      transition: "box-shadow 0.3s ease", // Smooth transition effect
+                      margin: "15px",
+                      transition: "box-shadow 0.3s ease",
+                      display: "flex",
                     }}
                   />
                 ))}
