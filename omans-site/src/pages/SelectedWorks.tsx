@@ -24,7 +24,8 @@ import {
 } from "react-beautiful-dnd";
 import { domainURL } from "../constants/generic.const";
 import { useWindowSize } from "../hooks/navbar.hooks";
-import { colourPrimary, colourSecondary } from "../constants/colors.const";
+import { colourPrimary } from "../constants/colors.const";
+import { useParams } from "react-router-dom";
 
 interface Image {
   title: string;
@@ -57,28 +58,55 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
     setNewDescription(image?.description || "");
   };
 
+  const { seriesId } = useParams();
+  const seriesIdNumber = seriesId ? parseInt(seriesId, 10) : null;
+
+  // Fetch images associated with the selected series
   useEffect(() => {
     setLoading(true);
-    fetch(`${domainURL}/api/selected-works`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+    const fetchImages = async () => {
+      try {
+        if (seriesIdNumber) {
+          const response = await axios.get(
+            `${domainURL}/api/selected-series/${seriesIdNumber}`
+          );
+          setImages(response.data.selectedWorks || []);
+        } else {
+          setImages([]);
         }
-        return response.json();
-      })
-      .then((data) => {
-        setImages(data);
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error(
-          "There has been a problem with your fetch operation:",
-          error
-        );
+      } catch (error) {
+        console.error("Error fetching selected works:", error);
         setError("Error fetching selected works.");
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchImages();
+  }, [seriesIdNumber]);
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch(`${domainURL}/api/selected-works`)
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setImages(data);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error(
+  //         "There has been a problem with your fetch operation:",
+  //         error
+  //       );
+  //       setError("Error fetching selected works.");
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   // Auto-scroll to center the selected thumbnail
   useEffect(() => {
@@ -265,7 +293,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                               alt={`Image ${image.id}`}
                               sx={{
                                 height: "auto",
-                                width: !isAdmin ? "70vw" : "50%",
+                                width: "50%",
                                 maxWidth: "100%",
                                 marginX: "auto",
                                 backgroundColor: "transparent",
@@ -359,39 +387,45 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
           </Droppable>
         </DragDropContext>
       ) : loading ? (
-        <CircularProgress />
+        <Box
+          width={"100%"}
+          height={"100%"}
+          alignContent={"center"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          justifyItems={"center"}
+        >
+          <CircularProgress />
+        </Box>
       ) : (
         selectedImage && (
-          <Stack direction={"column"} alignItems={"center"} flex={1}>
+          <Stack
+            direction={"column"}
+            alignItems={"center"}
+            flex={1}
+            maxHeight={"100%"}
+            overflow={"hidden"}
+          >
             {/* Large Image Display */}
-            <Box
-              // height={
-              //   windowHeight === "sm"
-              //     ? "60%"
-              //     : windowHeight === "xs"
-              //       ? "50%"
-              //       : "80%"
-              // }
-              width={"100%"}
-              sx={{
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <Box width={"100%"} height={"90vh"} overflow={"hidden"}>
               <Stack
                 direction="row"
                 alignItems="center"
-                sx={{ width: "100%", overflow: "hidden", height: "100%" }}
+                justifyContent="center" // This centers the Stack horizontally
+                sx={{ width: "100%", height: "100%" }}
               >
                 <IconButton onClick={() => scrollThumbnails("left")}>
                   <ChevronLeft />
                 </IconButton>
                 <Box
                   sx={{
-                    mb: 4,
                     width: "100%",
                     textAlign: "center",
-                    height: "70vh",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    flexDirection: "column", // Center the content vertically
+                    height: "100%",
                     overflowY: "auto",
                   }}
                 >
@@ -400,26 +434,35 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                     image={selectedImage.imageUrl}
                     alt={selectedImage.title}
                     sx={{
-                      height: "60vh",
+                      maxHeight: "calc(100vh - 300px)",
+                      maxWidth: "80vw",
                       objectFit: "contain",
                       margin: "0 auto",
                     }}
                   />
-                  <Typography
-                    variant={
-                      windowWidth === "sm" ||
-                      windowWidth === "xs" ||
-                      windowHeight === "sm" ||
-                      windowHeight === "xs"
-                        ? "h6"
-                        : "h4"
-                    }
+
+                  <Box
+                    height={"200px"}
+                    sx={{
+                      mt: 1,
+                    }}
                   >
-                    {selectedImage.title}
-                  </Typography>
-                  <Typography variant="body1" sx={{ mt: 1 }}>
-                    {selectedImage.description}
-                  </Typography>
+                    <Typography
+                      variant={
+                        windowWidth === "sm" ||
+                        windowWidth === "xs" ||
+                        windowHeight === "sm" ||
+                        windowHeight === "xs"
+                          ? "h5"
+                          : "h4"
+                      }
+                    >
+                      {selectedImage.title}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                      {selectedImage.description}
+                    </Typography>
+                  </Box>
                 </Box>
                 <IconButton onClick={() => scrollThumbnails("right")}>
                   <ChevronRight />
@@ -444,6 +487,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                     ? 2
                     : 1,
                 marginX: 2,
+                zIndex: 9999,
               }}
             >
               <div

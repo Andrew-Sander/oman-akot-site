@@ -24,6 +24,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
 } from "@mui/material";
 import Gallery from "./Gallery";
 import ProfilePictureDialog from "../components/ProfilePictureDialog";
@@ -32,6 +33,14 @@ import UploadSelectedWorks from "../components/UploadSelectedWorks";
 import SelectedWorks from "./SelectedWorks";
 import UploadCV from "../components/UploadCV";
 import { domainURL } from "../constants/generic.const";
+import ManageSelectedSeries from "../components/ManageSelectedSeries";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { Delete } from "@mui/icons-material";
 
 interface BioData {
   bioText: string;
@@ -41,6 +50,12 @@ interface BioData {
 interface ProfilePictureData {
   id: number;
   imageUrl: string;
+}
+
+interface LandingPageImage {
+  id: number;
+  imageUrl: string;
+  order: number;
 }
 
 const AdminPage: React.FC = () => {
@@ -54,6 +69,12 @@ const AdminPage: React.FC = () => {
   const [images, setImages] = useState<any[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [landingPageImages, setLandingPageImages] = useState<
+    LandingPageImage[]
+  >([]);
+  const [landingPageFile, setLandingPageFile] = useState<File | null>(null);
+  const [landingPageUploadStatus, setLandingPageUploadStatus] =
+    useState<string>("");
 
   const [bio, setBio] = useState<string>("");
   const [profilePictures, setProfilePictures] = useState<ProfilePictureData[]>(
@@ -65,6 +86,79 @@ const AdminPage: React.FC = () => {
   const [defaultProfilePicture, setDefaultProfilePicture] =
     useState<string>("");
   const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+  const fetchLandingPageImages = useCallback(async () => {
+    try {
+      const response = await axios.get(`${domainURL}/api/landing-page-gallery`);
+      setLandingPageImages(response.data);
+    } catch (error) {
+      console.error("Error fetching landing page gallery images:", error);
+    }
+  }, []);
+  useEffect(() => {
+    fetchLandingPageImages();
+  }, [fetchLandingPageImages]);
+  const handleLandingPageFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setLandingPageFile(event.target.files ? event.target.files[0] : null);
+  };
+  const handleLandingPageFileUpload = async () => {
+    if (!landingPageFile) {
+      setLandingPageUploadStatus("No file found");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", landingPageFile);
+    formData.append("order", (landingPageImages.length + 1).toString());
+
+    try {
+      const response = await axios.post(
+        `${domainURL}/api/landing-page-gallery`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setLandingPageUploadStatus(`File uploaded successfully`);
+      setLandingPageFile(null);
+      fetchLandingPageImages();
+    } catch (error) {
+      setLandingPageUploadStatus("Error uploading file!");
+      console.error("Upload error:", error);
+    }
+  };
+  const handleLandingPageImageDelete = async (id: number) => {
+    try {
+      await axios.delete(`${domainURL}/api/landing-page-gallery/${id}`);
+      fetchLandingPageImages();
+    } catch (error) {
+      console.error("Error deleting landing page image:", error);
+    }
+  };
+  const handleLandingPageDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const reorderedImages = Array.from(landingPageImages);
+    const [movedImage] = reorderedImages.splice(result.source.index, 1);
+    reorderedImages.splice(result.destination.index, 0, movedImage);
+
+    // Update the order in the backend
+    try {
+      for (let i = 0; i < reorderedImages.length; i++) {
+        const image = reorderedImages[i];
+        await axios.put(`${domainURL}/api/landing-page-gallery/${image.id}`, {
+          order: i + 1,
+        });
+      }
+      setLandingPageImages(reorderedImages);
+    } catch (error) {
+      console.error("Error updating landing page images order:", error);
+    }
+  };
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFile(event.target.files ? event.target.files[0] : null);
@@ -255,6 +349,88 @@ const AdminPage: React.FC = () => {
 
   return (
     <Container maxWidth="md">
+      {/* New Accordion for Editing Landing Page Gallery */}
+      <Accordion sx={{ mt: 2 }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel-landing-page-gallery-content"
+          id="panel-landing-page-gallery-header"
+        >
+          <Typography variant="h5">Edit Landing Page Gallery</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {/* Upload New Image */}
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h6">Upload New Image</Typography>
+            <Input type="file" onChange={handleLandingPageFileChange} />
+            <Button
+              variant="contained"
+              onClick={handleLandingPageFileUpload}
+              sx={{ mt: 2 }}
+            >
+              Upload
+            </Button>
+            {landingPageUploadStatus && (
+              <Typography variant="body2">{landingPageUploadStatus}</Typography>
+            )}
+          </Box>
+
+          {/* Display and Edit Images */}
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Manage Images
+          </Typography>
+          <DragDropContext onDragEnd={handleLandingPageDragEnd}>
+            <Droppable droppableId="landingPageGallery" direction="vertical">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {landingPageImages.map((image, index) => (
+                    <Draggable
+                      key={image.id}
+                      draggableId={image.id.toString()}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <Card
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            mb: 2,
+                          }}
+                        >
+                          <CardMedia
+                            component="img"
+                            image={image.imageUrl}
+                            alt={`Image ${image.id}`}
+                            sx={{ width: 100, height: 100, objectFit: "cover" }}
+                          />
+                          <CardContent sx={{ flexGrow: 1 }}>
+                            <Typography variant="body1">
+                              Order: {index + 1}
+                            </Typography>
+                          </CardContent>
+                          <IconButton
+                            onClick={() =>
+                              handleLandingPageImageDelete(image.id)
+                            }
+                            color="error"
+                          >
+                            <Delete />
+                          </IconButton>
+                        </Card>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </AccordionDetails>
+      </Accordion>
+
       <Accordion sx={{ mt: 2 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -312,6 +488,19 @@ const AdminPage: React.FC = () => {
       <Accordion sx={{ mt: 2 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel-series-content"
+          id="panel-series-header"
+        >
+          <Typography variant="h5">Manage Selected Series</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <ManageSelectedSeries />
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion sx={{ mt: 2 }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
@@ -322,7 +511,7 @@ const AdminPage: React.FC = () => {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion sx={{ mt: 2 }}>
+      {/* <Accordion sx={{ mt: 2 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -333,94 +522,7 @@ const AdminPage: React.FC = () => {
         <AccordionDetails>
           <SelectedWorks isAdmin={true} />
         </AccordionDetails>
-      </Accordion>
-
-      <Accordion sx={{ mt: 2 }}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography variant="h5">Manage Bio</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Container>
-            <Stack direction={screenWidth < 500 ? "column" : "row"} spacing={4}>
-              <Avatar
-                src={defaultProfilePicture}
-                sx={{ width: 150, height: 220 }}
-                variant="square"
-                alt="Profile Picture"
-              />
-              {editMode ? (
-                <>
-                  <Stack direction={"column"} spacing={1} width={"100%"}>
-                    <TextField
-                      value={newBio}
-                      onChange={(e) => setNewBio(e.target.value)}
-                      multiline
-                      fullWidth
-                      // sx={{ width: "100%" }}
-                      rows={6}
-                      variant="outlined"
-                    />
-                    <Stack direction={"row"} spacing={2}>
-                      <Button
-                        onClick={handleBioUpdate}
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 2 }}
-                      >
-                        Save Bio
-                      </Button>
-                      <Button
-                        onClick={() => setEditMode(false)}
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 2 }}
-                      >
-                        Cancel
-                      </Button>
-                    </Stack>
-                  </Stack>
-                </>
-              ) : (
-                <>
-                  <Stack direction={"column"} spacing={1} width={"100%"}>
-                    <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-                      {bio}
-                    </Typography>
-                    <Button
-                      onClick={() => setEditMode(true)}
-                      variant="contained"
-                      color="primary"
-                      sx={{ mt: 2 }}
-                    >
-                      Edit Bio
-                    </Button>
-                  </Stack>
-                </>
-              )}
-            </Stack>
-            <Typography>Upload a profile picture:</Typography>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleProfilePictureUpload}
-              style={{ marginTop: "20px" }}
-            />
-            <Divider />
-            <Button
-              onClick={() => setBioDialogOpen(true)}
-              variant="contained"
-              color="secondary"
-              sx={{ my: 2 }}
-            >
-              Change Profile Picture
-            </Button>
-          </Container>
-        </AccordionDetails>
-      </Accordion>
+      </Accordion> */}
 
       <Accordion sx={{ mt: 2 }}>
         <AccordionSummary
@@ -434,7 +536,7 @@ const AdminPage: React.FC = () => {
           <UploadCV />
         </AccordionDetails>
       </Accordion>
-
+      {/* 
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -486,15 +588,15 @@ const AdminPage: React.FC = () => {
             Set Background Image
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
-      <ProfilePictureDialog
+      {/* <ProfilePictureDialog
         open={bioDialogOpen}
         onClose={() => setBioDialogOpen(false)}
         onSelect={handleProfilePictureSelect}
         profilePictures={profilePictures}
         setProfilePictures={setProfilePictures}
-      />
+      /> */}
     </Container>
   );
 };

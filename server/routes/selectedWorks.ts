@@ -18,6 +18,21 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get selected works by selectedSeriesId
+router.get("/series/:selectedSeriesId", async (req, res) => {
+  const { selectedSeriesId } = req.params;
+  try {
+    const works = await SelectedWorks.findAll({
+      where: { selectedSeriesId },
+      order: [["order", "ASC"]],
+    });
+    res.status(200).json(works);
+  } catch (error) {
+    console.error("Error fetching selected works:", error);
+    res.status(500).send("Error fetching selected works");
+  }
+});
+
 // Get a single selected work by ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -36,13 +51,14 @@ router.get("/:id", async (req, res) => {
 
 // Create a new selected work
 router.post("/", async (req, res) => {
-  const { title, description, imageUrl, order } = req.body;
+  const { title, description, imageUrl, order, selectedSeriesId } = req.body;
   try {
     const newWork = await SelectedWorks.create({
       title,
       description,
       imageUrl,
       order,
+      selectedSeriesId,
     });
     res.status(201).json(newWork);
   } catch (error) {
@@ -132,11 +148,13 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       const imageUrl = req.file.location; // URL from S3
       const description = req.body.description || "";
       const title = req.body.title || "";
+      const selectedSeriesId = req.body.selectedSeriesId;
       const newWork = await SelectedWorks.create({
         imageUrl,
         description,
         title,
         order: nextOrder,
+        selectedSeriesId,
       });
       res.status(201).json(newWork);
     } catch (error) {

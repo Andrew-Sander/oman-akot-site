@@ -10,7 +10,9 @@ import Bio from "./models/Bio";
 import ProfilePicture from "./models/ProfilePicture";
 import imageRoutes from "./routes/images";
 import selectedWorksRoutes from "./routes/selectedWorks";
+import selectedSeriesRoutes from "./routes/selectedSeries";
 import cv from "./routes/cv";
+import landingPageGalleryRoutes from "./routes/landingPageGallery";
 const AWS = require("aws-sdk");
 
 const cors = require("cors");
@@ -20,13 +22,13 @@ const path = require("path");
 app.use(
   cors(
     {
-      origin: "https://www.omanjakot.com",
-      // origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN_PROD_1,
+      // origin: process.env.CORS_ORIGIN_DEV,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
     },
     {
-      origin: "https://omans-site-ccfb2e7a394c.herokuapp.com/",
+      origin: process.env.CORS_ORIGIN_PROD_2,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
     }
@@ -38,10 +40,12 @@ app.use(express.json());
 // Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/landing-page-gallery", landingPageGalleryRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/imageRoute", imageRoutes);
 app.use("/api/selected-works", selectedWorksRoutes);
+app.use("/api/selected-series", selectedSeriesRoutes);
 app.use("/api/cv", cv);
 
 const s3 = new AWS.S3();
