@@ -511,7 +511,7 @@ const AdminPage: React.FC = () => {
         </AccordionDetails>
       </Accordion>
 
-      {/* <Accordion sx={{ mt: 2 }}>
+      <Accordion sx={{ mt: 2 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -522,7 +522,7 @@ const AdminPage: React.FC = () => {
         <AccordionDetails>
           <SelectedWorks isAdmin={true} />
         </AccordionDetails>
-      </Accordion> */}
+      </Accordion>
 
       <Accordion sx={{ mt: 2 }}>
         <AccordionSummary
