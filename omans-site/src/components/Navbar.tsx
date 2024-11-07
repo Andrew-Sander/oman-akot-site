@@ -124,7 +124,7 @@ const Navbar: React.FC = () => {
         alignItems="center" // Ensure vertical centering
       >
         <Typography variant="h1" color={"white"} padding={() => 2}>
-          OMAN AKOT
+          OMAN J. AKOT
         </Typography>
         <IconButton
           sx={{ ":hover": { background: "none" } }}
@@ -225,7 +225,7 @@ const Navbar: React.FC = () => {
             padding={() => 2}
             sx={{ cursor: "pointer" }}
           >
-            OMAN AKOT
+            OMAN J. AKOT
           </Typography>
 
           {windowWidth === "xs" || windowWidth === "sm" ? (
