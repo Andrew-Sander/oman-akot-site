@@ -20,19 +20,15 @@ const app = express();
 const path = require("path");
 
 app.use(
-  cors(
-    {
-      origin: process.env.CORS_ORIGIN_PROD_1,
-      // origin: process.env.CORS_ORIGIN_DEV,
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    },
-    {
-      origin: process.env.CORS_ORIGIN_PROD_2,
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    }
-  )
+  cors({
+    origin: [
+      process.env.CORS_ORIGIN_DEV,
+      process.env.CORS_ORIGIN_PROD_1,
+      process.env.CORS_ORIGIN_PROD_2,
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
 
 // Middleware to parse JSON bodies

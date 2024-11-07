@@ -115,7 +115,7 @@ const Navbar: React.FC = () => {
       <Stack
         direction={"row"}
         flex={1}
-        justifyContent={"flex-end"}
+        justifyContent={"space-between"}
         top={0}
         left={0}
         zIndex={1000}
@@ -123,13 +123,16 @@ const Navbar: React.FC = () => {
         position={"fixed"}
         alignItems="center" // Ensure vertical centering
       >
+        <Typography variant="h1" color={"white"} padding={() => 2}>
+          OMAN AKOT
+        </Typography>
         <IconButton
           sx={{ ":hover": { background: "none" } }}
           onClick={handleClickMenu}
         >
           <Icon
             sx={{
-              color: colourBlack,
+              color: "white",
               width: 45,
               height: 40,
               padding: { md: 1, sm: 0 },

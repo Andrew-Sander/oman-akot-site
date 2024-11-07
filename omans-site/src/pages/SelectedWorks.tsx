@@ -63,50 +63,53 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   // Fetch images associated with the selected series
   useEffect(() => {
-    setLoading(true);
-    const fetchImages = async () => {
-      try {
-        if (seriesIdNumber) {
-          const response = await axios.get(
-            `${domainURL}/api/selected-series/${seriesIdNumber}`
-          );
-          setImages(response.data.selectedWorks || []);
-        } else {
-          setImages([]);
+    if (!isAdmin) {
+      setLoading(true);
+      const fetchImages = async () => {
+        try {
+          if (seriesIdNumber) {
+            const response = await axios.get(
+              `${domainURL}/api/selected-series/${seriesIdNumber}`
+            );
+            setImages(response.data.selectedWorks || []);
+          } else {
+            setImages([]);
+          }
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching selected works:", error);
+          setError("Error fetching selected works.");
+          setLoading(false);
         }
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching selected works:", error);
-        setError("Error fetching selected works.");
-        setLoading(false);
-      }
-    };
+      };
+      fetchImages();
+    }
+  }, [seriesIdNumber, isAdmin]);
 
-    fetchImages();
-  }, [seriesIdNumber]);
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch(`${domainURL}/api/selected-works`)
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       setImages(data);
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error(
-  //         "There has been a problem with your fetch operation:",
-  //         error
-  //       );
-  //       setError("Error fetching selected works.");
-  //       setLoading(false);
-  //     });
-  // }, []);
+  useEffect(() => {
+    if (isAdmin) {
+      setLoading(true);
+      fetch(`${domainURL}/api/selected-works`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setImages(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(
+            "There has been a problem with your fetch operation:",
+            error
+          );
+          setError("Error fetching selected works.");
+          setLoading(false);
+        });
+    }
+  }, [isAdmin]);
 
   // Auto-scroll to center the selected thumbnail
   useEffect(() => {

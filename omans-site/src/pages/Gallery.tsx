@@ -161,16 +161,16 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
           combinedImages = response.data;
         } else if (location.pathname === "/gallery") {
           // Fetch images from LandingPageGallery, Gallery, and SelectedWorks
-          const [landingPageResponse, galleryResponse, selectedWorksResponse] =
+          const [galleryResponse, selectedWorksResponse] = //landingPageResponse,
             await Promise.all([
-              axios.get(`${domainURL}/api/landing-page-gallery`),
+              // axios.get(`${domainURL}/api/landing-page-gallery`),
               axios.get(`${domainURL}/api/images`),
               axios.get(`${domainURL}/api/selected-works`),
             ]);
 
           // Combine all images into one array
           combinedImages = [
-            ...landingPageResponse.data,
+            // ...landingPageResponse.data,
             ...galleryResponse.data,
             ...selectedWorksResponse.data,
           ];
