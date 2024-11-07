@@ -356,7 +356,7 @@ const AdminPage: React.FC = () => {
           aria-controls="panel-landing-page-gallery-content"
           id="panel-landing-page-gallery-header"
         >
-          <Typography variant="h5">Edit Landing Page Gallery</Typography>
+          <Typography variant="h5">Edit Landing Page</Typography>
         </AccordionSummary>
         <AccordionDetails>
           {/* Upload New Image */}
