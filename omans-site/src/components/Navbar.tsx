@@ -166,13 +166,12 @@ const Navbar: React.FC = () => {
               <Divider />
             </>
           )}
-          <MenuItem onClick={() => handleNavigate("/gallery")}>
-            Gallery
-          </MenuItem>
-
           {/* "Selected Works" with Submenu */}
           <MenuItem onClick={handleOpenSelectedWorksMenu}>
             Selected Works
+          </MenuItem>
+          <MenuItem onClick={() => handleNavigate("/gallery")}>
+            Gallery
           </MenuItem>
           <Menu
             anchorEl={selectedWorksAnchorEl}
@@ -329,14 +328,14 @@ const Navbar: React.FC = () => {
                 <Divider />
               </>
             )}
-            <MenuItem onClick={() => handleNavigate("/gallery")}>
-              Gallery
-            </MenuItem>
-
             {/* "Selected Works" with Submenu */}
             <MenuItem onClick={handleOpenSelectedWorksMenu}>
               Selected Works
             </MenuItem>
+            <MenuItem onClick={() => handleNavigate("/gallery")}>
+              Gallery
+            </MenuItem>
+
             <Menu
               anchorEl={selectedWorksAnchorEl}
               open={Boolean(selectedWorksAnchorEl)}

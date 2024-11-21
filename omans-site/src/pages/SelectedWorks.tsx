@@ -10,10 +10,11 @@ import {
   TextField,
   Box,
   CircularProgress,
+  Switch,
 } from "@mui/material";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ChevronLeft, ChevronRight, Close, Save } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, Save } from "@mui/icons-material";
 import {
   DragDropContext,
   Droppable,
@@ -24,13 +25,14 @@ import {
 } from "react-beautiful-dnd";
 import { domainURL } from "../constants/generic.const";
 import { useWindowSize } from "../hooks/navbar.hooks";
-import { colourPrimary } from "../constants/colors.const";
+import { colourBlack50, colourPrimary } from "../constants/colors.const";
 import { useParams } from "react-router-dom";
 
 interface Image {
   title: string;
   id: number;
   imageUrl: string;
+  available: boolean;
   description?: string;
 }
 
@@ -44,6 +46,8 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
   const [error, setError] = useState<string | null>(null);
   const [editId, setEditId] = useState<number | null>(null);
   const [newDescription, setNewDescription] = useState<string>("");
+  const [newTitle, setNewTitle] = useState<string>("");
+  const [newAvailable, setNewAvailable] = useState<boolean>(true);
   const [selectedImage, setSelectedImage] = useState<Image>();
 
   const thumbnailRefs = useRef<(HTMLImageElement | null)[]>([]); // For auto-scrolling
@@ -56,6 +60,8 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
     setEditId(id);
     const image = images.find((img) => img.id === id);
     setNewDescription(image?.description || "");
+    setNewTitle(image?.title || "");
+    setNewAvailable(image?.available || true);
   };
 
   const { seriesId } = useParams();
@@ -69,9 +75,9 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
         try {
           if (seriesIdNumber) {
             const response = await axios.get(
-              `${domainURL}/api/selected-series/${seriesIdNumber}`
+              `${domainURL}/api/selected-works/series/${seriesIdNumber}`
             );
-            setImages(response.data.selectedWorks || []);
+            setImages(response.data || []);
           } else {
             setImages([]);
           }
@@ -138,12 +144,20 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
       const image = images.find((img) => img.id === id);
       await axios.put(`${domainURL}/api/selected-works/${id}`, {
         description: newDescription,
-        title: image?.title,
+        title: newTitle,
         imageUrl: image?.imageUrl,
+        available: newAvailable,
       });
       setImages(
         images.map((image) =>
-          image.id === id ? { ...image, description: newDescription } : image
+          image.id === id
+            ? {
+                ...image,
+                description: newDescription,
+                title: newTitle,
+                available: newAvailable,
+              }
+            : image
         )
       );
       setEditId(null);
@@ -302,6 +316,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                                 backgroundColor: "transparent",
                                 cursor: !isAdmin ? "pointer" : undefined,
                               }}
+                              loading="eager"
                             />
                             {isAdmin && (
                               <CardContent>
@@ -321,12 +336,26 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                                       <>
                                         <Stack direction={"row"}>
                                           <TextField
+                                            value={newTitle}
+                                            onChange={(e) =>
+                                              setNewTitle(e.target.value)
+                                            }
+                                          />
+                                          <TextField
                                             value={newDescription}
                                             onChange={(e) =>
                                               setNewDescription(e.target.value)
                                             }
                                             multiline
                                             rows={3}
+                                          />
+                                          <Typography>Available?:</Typography>
+                                          <Switch
+                                            defaultChecked
+                                            checked={newAvailable}
+                                            onChange={(e) =>
+                                              setNewAvailable(e.target.checked)
+                                            }
                                           />
                                           <IconButton
                                             sx={{
@@ -351,8 +380,16 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                                             !isAdmin ? "center" : undefined
                                           }
                                         >
-                                          {image.title || ""}
+                                          {image.title}
                                         </Typography>
+                                        {!image.available && (
+                                          <Typography
+                                            variant="body2"
+                                            color={colourBlack50}
+                                          >
+                                            (Unavailable)
+                                          </Typography>
+                                        )}
                                         <Typography
                                           sx={{ whiteSpace: "pre-wrap" }}
                                           variant="body2"
@@ -442,6 +479,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                       objectFit: "contain",
                       margin: "0 auto",
                     }}
+                    loading="eager"
                   />
 
                   <Box
@@ -462,6 +500,12 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                     >
                       {selectedImage.title}
                     </Typography>
+                    {!selectedImage.available && (
+                      <Typography variant="body2" color={colourBlack50}>
+                        (Unavailable)
+                      </Typography>
+                    )}
+
                     <Typography variant="body1" sx={{ mt: 1 }}>
                       {selectedImage.description}
                     </Typography>
@@ -535,6 +579,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                       transition: "box-shadow 0.3s ease",
                       display: "flex",
                     }}
+                    loading="eager"
                   />
                 ))}
               </div>

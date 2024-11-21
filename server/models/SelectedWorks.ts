@@ -17,6 +17,7 @@ interface SelectedWorksAttributes {
   imageUrl: string;
   order: number;
   selectedSeriesId: number;
+  available: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -33,6 +34,7 @@ class SelectedWorks
   public imageUrl!: string;
   public order!: number;
   public selectedSeriesId!: number;
+  public available!: boolean; // Add this line
 
   // Timestamps
   public readonly createdAt!: Date;
@@ -93,6 +95,11 @@ SelectedWorks.init(
         model: "SelectedSeries",
         key: "id",
       },
+    },
+    available: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {

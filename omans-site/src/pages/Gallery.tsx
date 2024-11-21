@@ -45,6 +45,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [editId, setEditId] = useState<number | null>(null);
+  const [newTitle, setNewTitle] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<Image>();
@@ -72,16 +73,20 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
     setEditId(id);
     const image = images.find((img) => img.id === id);
     setNewDescription(image?.description || "");
+    setNewTitle(image?.title || "");
   };
 
   const handleUpdate = async (id: number) => {
     try {
       await axios.put(`${domainURL}/api/images/${id}`, {
         description: newDescription,
+        title: newTitle,
       });
       setImages(
         images.map((image) =>
-          image.id === id ? { ...image, description: newDescription } : image
+          image.id === id
+            ? { ...image, description: newDescription, title: newTitle }
+            : image
         )
       );
       setEditId(null);
@@ -112,17 +117,17 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
 
   const handleDragEnd = useCallback(
     async (result: DropResult) => {
-      if (!result.destination) return;
+      // if (!result.destination) return;
 
-      const reorderedImages = Array.from(images);
-      const [movedImage] = reorderedImages.splice(result.source.index, 1);
-      reorderedImages.splice(result.destination.index, 0, movedImage);
+      // const reorderedImages = Array.from(images);
+      // const [movedImage] = reorderedImages.splice(result.source.index, 1);
+      // reorderedImages.splice(result.destination.index, 0, movedImage);
 
-      setImages(reorderedImages);
+      // setImages(reorderedImages);
 
       if (isAdmin) {
         try {
-          const reorderedIds = reorderedImages.map((image) => image.id);
+          // const reorderedIds = reorderedImages.map((image) => image.id);
           // Update the order in your backend if necessary
           // await axios.put(`${domainURL}/api/images/reorder`, {
           //   reorderedIds,
@@ -295,7 +300,9 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                                 backgroundColor: "transparent",
                                 cursor: !isAdmin ? "pointer" : undefined,
                               }}
+                              loading="eager"
                             />
+
                             {isAdmin && (
                               <CardContent>
                                 <Stack
@@ -313,6 +320,12 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                                     {editId === image.id ? (
                                       <>
                                         <Stack direction={"row"}>
+                                          <TextField
+                                            value={newTitle}
+                                            onChange={(e) =>
+                                              setNewTitle(e.target.value)
+                                            }
+                                          />
                                           <TextField
                                             value={newDescription}
                                             onChange={(e) =>
@@ -429,6 +442,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                   maxWidth: "70vw",
                   maxHeight: "60vh",
                 }}
+                loading="eager"
               />
               <Typography
                 sx={{ whiteSpace: "pre-wrap", mb: 2 }}

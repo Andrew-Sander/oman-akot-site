@@ -59,6 +59,7 @@ router.post("/", async (req, res) => {
       imageUrl,
       order,
       selectedSeriesId,
+      available: true,
     });
     res.status(201).json(newWork);
   } catch (error) {
@@ -97,7 +98,7 @@ router.put(
 // Update a selected work by ID
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, description, imageUrl } = req.body;
+  const { title, description, imageUrl, available } = req.body;
 
   try {
     const work = await SelectedWorks.findByPk(id);
@@ -108,6 +109,7 @@ router.put("/:id", async (req, res) => {
     work.title = title;
     work.description = description;
     work.imageUrl = imageUrl;
+    work.available = available;
     await work.save();
 
     res.status(200).json(work);
@@ -155,6 +157,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
         title,
         order: nextOrder,
         selectedSeriesId,
+        available: true,
       });
       res.status(201).json(newWork);
     } catch (error) {
