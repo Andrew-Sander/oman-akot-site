@@ -10,6 +10,7 @@ import {
   TextField,
   DialogContent,
   Dialog,
+  Switch,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -26,11 +27,13 @@ import {
   NotDraggingStyle,
 } from "react-beautiful-dnd";
 import { domainURL } from "../constants/generic.const";
+import { colourBlack50 } from "../constants/colors.const";
 
 interface Image {
   title?: string;
   id: number;
   imageUrl: string;
+  available: boolean;
   description?: string;
 }
 
@@ -47,6 +50,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
   const [editId, setEditId] = useState<number | null>(null);
   const [newTitle, setNewTitle] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
+  const [newAvailable, setNewAvailable] = useState<boolean>(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<Image>();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -74,6 +78,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
     const image = images.find((img) => img.id === id);
     setNewDescription(image?.description || "");
     setNewTitle(image?.title || "");
+    setNewAvailable(image?.available || true);
   };
 
   const handleUpdate = async (id: number) => {
@@ -81,11 +86,17 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
       await axios.put(`${domainURL}/api/images/${id}`, {
         description: newDescription,
         title: newTitle,
+        available: newAvailable,
       });
       setImages(
         images.map((image) =>
           image.id === id
-            ? { ...image, description: newDescription, title: newTitle }
+            ? {
+                ...image,
+                description: newDescription,
+                title: newTitle,
+                available: newAvailable,
+              }
             : image
         )
       );
@@ -334,6 +345,13 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                                             multiline
                                             rows={3}
                                           />
+                                          <Typography>Available?:</Typography>
+                                          <Switch
+                                            checked={newAvailable}
+                                            onChange={(e) =>
+                                              setNewAvailable(e.target.checked)
+                                            }
+                                          />
                                           <IconButton
                                             sx={{
                                               ":hover": {
@@ -359,6 +377,19 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                                         >
                                           {image.title || ""}
                                         </Typography>
+                                        {!image.available && (
+                                          <Typography
+                                            sx={{ whiteSpace: "pre-wrap" }}
+                                            color={colourBlack50}
+                                            variant="body2"
+                                            textAlign={
+                                              !isAdmin ? "center" : undefined
+                                            }
+                                          >
+                                            (Unavailable)
+                                          </Typography>
+                                        )}
+
                                         <Typography
                                           sx={{ whiteSpace: "pre-wrap" }}
                                           variant="body2"
@@ -431,7 +462,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
             <Close color="action" />
           </IconButton>
           <DialogContent sx={{ backgroundColor: "transparent" }}>
-            <Stack direction={"column"} alignItems={"center"} spacing={3}>
+            <Stack direction={"column"} alignItems={"center"} spacing={1}>
               <CardMedia
                 component="img"
                 image={selectedImage?.imageUrl}
@@ -445,12 +476,22 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                 loading="eager"
               />
               <Typography
-                sx={{ whiteSpace: "pre-wrap", mb: 2 }}
+                sx={{ whiteSpace: "pre-wrap" }}
                 color={"#4E1D92"}
                 variant="h6"
               >
                 {selectedImage?.title}
               </Typography>
+              {!selectedImage?.available && (
+                <Typography
+                  sx={{ whiteSpace: "pre-wrap" }}
+                  color={colourBlack50}
+                  variant="body2"
+                  textAlign={!isAdmin ? "center" : undefined}
+                >
+                  (Unavailable)
+                </Typography>
+              )}
               <Typography
                 sx={{ whiteSpace: "pre-wrap", mt: 2, width: "60%" }}
                 variant="body2"
@@ -458,18 +499,20 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
               >
                 {selectedImage?.description || ""}
               </Typography>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  handleClick(
-                    selectedImage?.id!,
-                    selectedImage?.description,
-                    selectedImage?.title
-                  )
-                }
-              >
-                Inquire
-              </Button>
+              {selectedImage?.available && (
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    handleClick(
+                      selectedImage?.id!,
+                      selectedImage?.description,
+                      selectedImage?.title
+                    )
+                  }
+                >
+                  Inquire
+                </Button>
+              )}
             </Stack>
           </DialogContent>
         </Dialog>

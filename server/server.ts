@@ -101,6 +101,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
         description,
         title,
         order: nextOrder,
+        available: true,
       });
       res.status(201).json(newImage);
     } catch (error) {
@@ -288,7 +289,7 @@ app.delete("/api/profile-pictures/:id", async (req, res) => {
 
 app.put("/api/images/:id", async (req, res) => {
   const { id } = req.params;
-  const { description, title, order } = req.body;
+  const { description, title, order, available } = req.body;
 
   try {
     // Find the image in the database
@@ -302,6 +303,7 @@ app.put("/api/images/:id", async (req, res) => {
     image.description = description;
     image.title = title;
     image.order = order;
+    image.available = available;
     await image.save();
 
     res.status(200).send("Image description updated successfully");

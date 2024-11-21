@@ -7,6 +7,7 @@ class Gallery extends Model {
   public description?: string; // Optional description
   public title!: string;
   public order!: number;
+  public available!: boolean;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
@@ -31,6 +32,11 @@ Gallery.init(
     },
     order: {
       type: DataTypes.INTEGER, // Add order column
+    },
+    available: {
+      type: DataTypes.BOOLEAN, // New field
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {
