@@ -246,7 +246,20 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
     [isAdmin, images]
   );
 
-  if (loading) return <CircularProgress />;
+  if (loading)
+    return (
+      <Box
+        sx={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
 
   if (error) {
     console.log(error);
@@ -316,7 +329,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                                 backgroundColor: "transparent",
                                 cursor: !isAdmin ? "pointer" : undefined,
                               }}
-                              loading="eager"
+                              loading="lazy"
                             />
                             {isAdmin && (
                               <CardContent>
@@ -479,7 +492,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                       objectFit: "contain",
                       margin: "0 auto",
                     }}
-                    loading="eager"
+                    loading="lazy"
                   />
 
                   <Box
@@ -579,7 +592,7 @@ const SelectedWorks: React.FC<GalleryProps> = ({ isAdmin }) => {
                       transition: "box-shadow 0.3s ease",
                       display: "flex",
                     }}
-                    loading="eager"
+                    loading="lazy"
                   />
                 ))}
               </div>

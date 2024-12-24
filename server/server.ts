@@ -1,5 +1,6 @@
 import express from "express";
-import { upload } from "./s3uploads";
+// import { upload } from "./s3uploads";
+import { deleteFromBunny, upload, uploadToBunny } from "./bunnyUploads";
 import Gallery from "./models/Gallery";
 import Settings from "./models/Settings";
 import adminRoutes from "./routes/admin";
@@ -13,6 +14,8 @@ import selectedWorksRoutes from "./routes/selectedWorks";
 import selectedSeriesRoutes from "./routes/selectedSeries";
 import cv from "./routes/cv";
 import landingPageGalleryRoutes from "./routes/landingPageGallery";
+import { v4 as uuidv4 } from "uuid";
+
 const AWS = require("aws-sdk");
 
 const cors = require("cors");
@@ -89,11 +92,14 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     order: [["order", "DESC"]],
   });
   const nextOrder = maxOrderImage ? maxOrderImage.order + 1 : 1;
-  //@ts-ignore
-  if (req.file && req.file.location) {
+
+  if (req.file) {
     try {
-      //@ts-ignore
-      const imageUrl = req.file.location; // URL from S3
+      const originalName = req.file.originalname;
+      const fileName = `${uuidv4()}-${originalName}`;
+
+      const imageUrl = await uploadToBunny(req.file.buffer, fileName);
+
       const description = req.body.description || "";
       const title = req.body.title || "";
       const newImage = await Gallery.create({
@@ -241,16 +247,12 @@ app.delete("/api/images/:id", async (req, res) => {
       return res.status(404).send("Image not found");
     }
 
-    // Extract the S3 key from the imageUrl
-    const s3Key = image.imageUrl.split("/").pop();
+    const imageUrl = image.imageUrl;
+    const fileName = imageUrl.split("/").pop();
 
-    // Delete the image from S3
-    await s3
-      .deleteObject({
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: s3Key,
-      })
-      .promise();
+    if (fileName) {
+      await deleteFromBunny(fileName);
+    }
 
     // Delete the image record from the database
     await image.destroy();
@@ -267,13 +269,12 @@ app.delete("/api/profile-pictures/:id", async (req, res) => {
   try {
     const picture = await ProfilePicture.findByPk(id);
     if (picture) {
-      // Delete from S3
-      const s3Params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: picture.imageUrl.split("/").pop(), // Extract the file name
-      };
+      const imageUrl = picture.imageUrl;
+      const fileName = imageUrl.split("/").pop();
 
-      await s3.deleteObject(s3Params).promise();
+      if (fileName) {
+        await deleteFromBunny(fileName);
+      }
 
       // Delete from database
       await picture.destroy();
@@ -313,14 +314,14 @@ app.put("/api/images/:id", async (req, res) => {
   }
 });
 
-// Serve static files from the React app
+// // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../omans-site/build")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
 });
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// const PORT = process.env.PORT || 8000;
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Card,
-  CardMedia,
   CardContent,
   Typography,
   Button,
@@ -11,6 +10,8 @@ import {
   DialogContent,
   Dialog,
   Switch,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -28,6 +29,8 @@ import {
 } from "react-beautiful-dnd";
 import { domainURL } from "../constants/generic.const";
 import { colourBlack50 } from "../constants/colors.const";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 interface Image {
   title?: string;
@@ -148,7 +151,7 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
         }
       }
     },
-    [isAdmin, images]
+    [isAdmin]
   );
 
   const goToPreviousImage = () => {
@@ -236,7 +239,19 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
   }, [images.length, isAdmin, resetTimer, location.pathname]);
 
   if (loading) {
-    return null;
+    return (
+      <Box
+        sx={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
@@ -296,23 +311,28 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
                                 <DeleteIcon color="error" />
                               </IconButton>
                             )}
-                            <CardMedia
+                            <Box
                               onClick={() => {
-                                !isAdmin && handleOpenDialog(image);
+                                if (!isAdmin) handleOpenDialog(image);
                               }}
-                              component="img"
-                              image={image.imageUrl}
-                              alt={`Image ${image.id}`}
-                              sx={{
-                                height: "auto",
-                                width: !isAdmin ? "100vw" : "50%",
-                                maxWidth: "100%",
-                                marginX: "auto",
-                                backgroundColor: "transparent",
-                                cursor: !isAdmin ? "pointer" : undefined,
-                              }}
-                              loading="eager"
-                            />
+                            >
+                              <LazyLoadImage
+                                placeholder={<CircularProgress size={80} />}
+                                src={image.imageUrl}
+                                alt={`Image ${image.id}`}
+                                loading="lazy"
+                                effect="blur"
+                                style={{
+                                  height: "auto",
+                                  width: !isAdmin ? "100vw" : "50%",
+                                  maxWidth: "100%",
+                                  margin: "0 auto",
+                                  backgroundColor: "transparent",
+                                  cursor: !isAdmin ? "pointer" : "default",
+                                  display: "block",
+                                }}
+                              />
+                            </Box>
 
                             {isAdmin && (
                               <CardContent>
@@ -463,17 +483,17 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
           </IconButton>
           <DialogContent sx={{ backgroundColor: "transparent" }}>
             <Stack direction={"column"} alignItems={"center"} spacing={1}>
-              <CardMedia
-                component="img"
-                image={selectedImage?.imageUrl}
+              <LazyLoadImage
+                src={selectedImage?.imageUrl}
                 alt={`Image ${selectedImage?.id}`}
-                sx={{
+                effect="blur"
+                placeholder={<CircularProgress size={80} />}
+                style={{
                   objectFit: "contain",
                   backgroundColor: "transparent",
                   maxWidth: "70vw",
                   maxHeight: "60vh",
                 }}
-                loading="eager"
               />
               <Typography
                 sx={{ whiteSpace: "pre-wrap" }}
@@ -535,13 +555,14 @@ const Gallery: React.FC<GalleryProps> = ({ isAdmin }) => {
         }}
       >
         {images.length > 0 && (
-          <CardMedia
-            component="img"
-            image={images[currentIndex]?.imageUrl}
+          <LazyLoadImage
+            src={images[currentIndex]?.imageUrl}
             alt={`Image ${images[currentIndex]?.id}`}
+            placeholder={<CircularProgress size={80} />}
+            effect="blur"
             style={{
-              width: "100%",
-              height: "100%",
+              width: "100vw",
+              height: "100vh",
               objectFit: "cover",
             }}
           />

@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import SelectedWorks from "../models/SelectedWorks";
-import { upload } from "../s3uploads";
+import { deleteFromBunny, upload, uploadToBunny } from "../bunnyUploads";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 interface ReorderRequestBody {
@@ -123,6 +124,18 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
+    const image = await SelectedWorks.findByPk(id);
+
+    if (!image) {
+      return res.status(404).send("Image not found");
+    }
+
+    const imageUrl = image.imageUrl;
+    const fileName = imageUrl.split("/").pop();
+
+    if (fileName) {
+      await deleteFromBunny(fileName);
+    }
     const work = await SelectedWorks.findByPk(id);
     if (!work) {
       return res.status(404).send("Selected work not found");
@@ -144,10 +157,13 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   const nextOrder = maxOrderWork ? maxOrderWork.order + 1 : 1;
 
   //@ts-ignore
-  if (req.file && req.file.location) {
+  if (req.file) {
     try {
-      //@ts-ignore
-      const imageUrl = req.file.location; // URL from S3
+      const originalName = req.file.originalname;
+      const fileName = `${uuidv4()}-${originalName}`;
+
+      const imageUrl = await uploadToBunny(req.file.buffer, fileName);
+
       const description = req.body.description || "";
       const title = req.body.title || "";
       const selectedSeriesId = req.body.selectedSeriesId;

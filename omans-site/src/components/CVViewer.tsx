@@ -5,7 +5,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import { useWindowSize } from "../hooks/navbar.hooks";
-import { breakpoints, domainURL } from "../constants/generic.const";
+import { domainURL } from "../constants/generic.const";
 
 // Set the workerSrc from the local pdfjs-dist version
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;

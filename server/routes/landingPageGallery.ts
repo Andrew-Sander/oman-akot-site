@@ -1,6 +1,7 @@
 import express from "express";
 import LandingPageGallery from "../models/LandingPageGallery";
-import { upload } from "../s3uploads";
+import { deleteFromBunny, upload, uploadToBunny } from "../bunnyUploads";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
@@ -27,9 +28,11 @@ router.post("/", upload.single("image"), async (req, res) => {
     const nextOrder = maxOrderImage ? maxOrderImage.order + 1 : 1;
 
     //@ts-ignore
-    if (req.file && req.file.location) {
-      //@ts-ignore
-      const imageUrl = req.file.location; // URL from S3 or your storage service
+    if (req.file) {
+      const originalName = req.file.originalname;
+      const fileName = `${uuidv4()}-${originalName}`;
+
+      const imageUrl = await uploadToBunny(req.file.buffer, fileName);
 
       const newImage = await LandingPageGallery.create({
         imageUrl,
@@ -76,6 +79,12 @@ router.delete("/:id", async (req, res) => {
     const image = await LandingPageGallery.findByPk(id);
     if (!image) {
       return res.status(404).send("Image not found");
+    }
+    const imageUrl = image.imageUrl;
+    const fileName = imageUrl.split("/").pop();
+
+    if (fileName) {
+      await deleteFromBunny(fileName);
     }
 
     await image.destroy();

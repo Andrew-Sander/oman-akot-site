@@ -2,7 +2,8 @@
 import express from "express";
 import { SelectedSeries } from "../models/associationshit";
 import { SelectedWorks } from "../models/associationshit";
-import { upload } from "../s3uploads";
+import { deleteFromBunny, upload, uploadToBunny } from "../bunnyUploads";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
@@ -66,27 +67,32 @@ router.post("/", upload.single("image"), async (req, res) => {
 router.put("/:id", upload.single("image"), async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
-  //@ts-ignore
-  const imageUrl = req.file ? req.file.location : null;
+  if (req.file) {
+    const originalName = req.file.originalname;
+    const fileName = `${uuidv4()}-${originalName}`;
 
-  try {
-    const series = await SelectedSeries.findByPk(id);
-    if (!series) {
-      return res.status(404).send("Selected series not found");
-    }
+    // 2. Upload to Bunny
+    const imageUrl = await uploadToBunny(req.file.buffer, fileName);
 
-    if (imageUrl) {
-      series.imageUrl = imageUrl;
-    }
-    if (name) {
-      series.name = name;
-    }
-    await series.save();
+    try {
+      const series = await SelectedSeries.findByPk(id);
+      if (!series) {
+        return res.status(404).send("Selected series not found");
+      }
 
-    res.status(200).json(series);
-  } catch (error) {
-    console.error("Error updating selected series:", error);
-    res.status(500).send("Error updating selected series");
+      if (imageUrl) {
+        series.imageUrl = imageUrl;
+      }
+      if (name) {
+        series.name = name;
+      }
+      await series.save();
+
+      res.status(200).json(series);
+    } catch (error) {
+      console.error("Error updating selected series:", error);
+      res.status(500).send("Error updating selected series");
+    }
   }
 });
 
@@ -97,6 +103,12 @@ router.delete("/:id", async (req, res) => {
     const series = await SelectedSeries.findByPk(id);
     if (!series) {
       return res.status(404).send("Selected series not found");
+    }
+    const imageUrl = series.imageUrl;
+    const fileName = imageUrl.split("/").pop();
+
+    if (fileName) {
+      await deleteFromBunny(fileName);
     }
 
     await series.destroy();
