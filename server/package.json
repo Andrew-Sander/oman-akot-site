@@ -10,9 +10,6 @@
   "keywords": [],
   "author": "Andrew Sander",
   "license": "ISC",
-  "devDependencies": {
-    "@types/uuid": "^10.0.0"
-  },
   "dependencies": {
     "@types/uuid": "^10.0.0",
     "@supabase/supabase-js": "^2.43.1",
