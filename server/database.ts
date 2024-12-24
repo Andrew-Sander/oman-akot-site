@@ -10,13 +10,13 @@ if (!process.env.DB_URL) {
 const sequelize = new Sequelize(process.env.DB_URL, {
   dialect: "postgres",
   dialectModule: pg,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, // For self-signed certificates
-    },
-  },
-  logging: false,
+  // dialectOptions: {
+  //   ssl: {
+  //     require: true,
+  //     rejectUnauthorized: false, // For self-signed certificates
+  //   },
+  // },
+  logging: true,
 });
 
 export default sequelize;
