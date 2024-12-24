@@ -321,7 +321,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
 });
 
-// const PORT = process.env.PORT || 8000;
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
