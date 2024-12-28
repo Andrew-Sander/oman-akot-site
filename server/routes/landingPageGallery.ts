@@ -2,6 +2,7 @@ import express from "express";
 import LandingPageGallery from "../models/LandingPageGallery";
 import { deleteFromBunny, upload, uploadToBunny } from "../bunnyUploads";
 import { v4 as uuidv4 } from "uuid";
+import sharp from "sharp";
 
 const router = express.Router();
 
@@ -32,7 +33,10 @@ router.post("/", upload.single("image"), async (req, res) => {
       const originalName = req.file.originalname;
       const fileName = `${uuidv4()}-${originalName}`;
 
-      const imageUrl = await uploadToBunny(req.file.buffer, fileName);
+      const compressedImage = await sharp(req.file.buffer)
+        .webp({ quality: 50 })
+        .toBuffer();
+      const imageUrl = await uploadToBunny(compressedImage, fileName);
 
       const newImage = await LandingPageGallery.create({
         imageUrl,

@@ -4,6 +4,7 @@ import { SelectedSeries } from "../models/associationshit";
 import { SelectedWorks } from "../models/associationshit";
 import { deleteFromBunny, upload, uploadToBunny } from "../bunnyUploads";
 import { v4 as uuidv4 } from "uuid";
+import sharp from "sharp";
 
 const router = express.Router();
 
@@ -70,9 +71,11 @@ router.put("/:id", upload.single("image"), async (req, res) => {
   if (req.file) {
     const originalName = req.file.originalname;
     const fileName = `${uuidv4()}-${originalName}`;
-
+    const compressedImage = await sharp(req.file.buffer)
+      .webp({ quality: 50 })
+      .toBuffer();
     // 2. Upload to Bunny
-    const imageUrl = await uploadToBunny(req.file.buffer, fileName);
+    const imageUrl = await uploadToBunny(compressedImage, fileName);
 
     try {
       const series = await SelectedSeries.findByPk(id);

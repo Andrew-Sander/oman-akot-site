@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import SelectedWorks from "../models/SelectedWorks";
 import { deleteFromBunny, upload, uploadToBunny } from "../bunnyUploads";
 import { v4 as uuidv4 } from "uuid";
+import sharp from "sharp";
 
 const router = express.Router();
 interface ReorderRequestBody {
@@ -162,7 +163,10 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       const originalName = req.file.originalname;
       const fileName = `${uuidv4()}-${originalName}`;
 
-      const imageUrl = await uploadToBunny(req.file.buffer, fileName);
+      const compressedImage = await sharp(req.file.buffer)
+        .webp({ quality: 50 })
+        .toBuffer();
+      const imageUrl = await uploadToBunny(compressedImage, fileName);
 
       const description = req.body.description || "";
       const title = req.body.title || "";

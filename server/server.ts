@@ -15,6 +15,7 @@ import selectedSeriesRoutes from "./routes/selectedSeries";
 import cv from "./routes/cv";
 import landingPageGalleryRoutes from "./routes/landingPageGallery";
 import { v4 as uuidv4 } from "uuid";
+import sharp from "sharp";
 
 const AWS = require("aws-sdk");
 
@@ -98,7 +99,10 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       const originalName = req.file.originalname;
       const fileName = `${uuidv4()}-${originalName}`;
 
-      const imageUrl = await uploadToBunny(req.file.buffer, fileName);
+      const compressedImage = await sharp(req.file.buffer)
+        .webp({ quality: 50 })
+        .toBuffer();
+      const imageUrl = await uploadToBunny(compressedImage, fileName);
 
       const description = req.body.description || "";
       const title = req.body.title || "";
@@ -315,11 +319,11 @@ app.put("/api/images/:id", async (req, res) => {
 });
 
 // // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../omans-site/build")));
+// app.use(express.static(path.join(__dirname, "../omans-site/build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../omans-site/build", "index.html"));
+// });
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
